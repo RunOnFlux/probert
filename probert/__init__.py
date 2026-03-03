@@ -14,5 +14,3 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """ Probert """
-
-__version__ = "0.0.18"
