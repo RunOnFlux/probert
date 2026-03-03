@@ -593,12 +593,12 @@ def coalesce(*keys):
                     # just in case
                     self._calls[key] = (func, action, data)
                 elif action == 'CHANGE':
-                    # If the object appeared and then changed before we
-                    # looked at it all, just pretend it was a NEW object
-                    # with the changed data. (the other cases for
-                    # prev_action work out ok, although DEL followed by
-                    # CHANGE is obviously not something we expect)
-                    self._calls[key] = (func, prev_action, data)
+                    # Merge change data into previous data so attributes
+                    # from the original NEW event (e.g. is_vlan, vlan_id,
+                    # vlan_link) are preserved when a CHANGE event arrives
+                    # without them.
+                    merged = {**prev_data, **data}
+                    self._calls[key] = (func, prev_action, merged)
                 elif action == 'DEL':
                     if prev_action == 'NEW':
                         # link disappeared before we did anything with it.

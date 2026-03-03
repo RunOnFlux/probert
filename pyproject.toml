@@ -1,0 +1,23 @@
+[project]
+name = "flux-probert"
+version = "0.1.0"
+description = "Hardware probing tool (Flux fork of Canonical's probert)"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+authors = [
+    { name = "Canonical Engineering", email = "ubuntu-devel@lists.ubuntu.com" },
+]
+requires-python = ">=3.12"
+
+# pyudev pinned to 0.24.3 (upstream wanted 0.21.0 but that's broken on Python 3.12+)
+dependencies = [
+    "pyudev>=0.24.3",
+    "jsonschema>=2.6.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["probert"]
