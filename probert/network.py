@@ -598,6 +598,14 @@ def coalesce(*keys):
                     # vlan_link) are preserved when a CHANGE event arrives
                     # without them.
                     merged = {**prev_data, **data}
+                    # is_vlan is always present in netlink data but CHANGE
+                    # events lack IFLA_LINKINFO, so the C extension reports
+                    # is_vlan=False. Preserve the NEW event's detection.
+                    if prev_data.get('is_vlan') and not data.get('is_vlan'):
+                        merged['is_vlan'] = True
+                        for k in ('vlan_id', 'vlan_link'):
+                            if k in prev_data:
+                                merged[k] = prev_data[k]
                     self._calls[key] = (func, prev_action, merged)
                 elif action == 'DEL':
                     if prev_action == 'NEW':
