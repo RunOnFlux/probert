@@ -640,9 +640,16 @@ def CoalescedCalls(obj):
 
 
 class UdevObserver(NetworkObserver):
-    """Use udev/netlink to observe network changes."""
+    """Use udev/netlink to observe network changes.
 
-    def __init__(self, receiver=None):
+    Args:
+        receiver: Event receiver for network change callbacks.
+        addr_families: Optional set of address families (e.g. {socket.AF_INET})
+            to track. When set, address change events for other families are
+            ignored. Default is None (track all families).
+    """
+
+    def __init__(self, receiver=None, addr_families=None):
         self._links = {}
         self.context = pyudev.Context()
         if receiver is None:
@@ -650,6 +657,7 @@ class UdevObserver(NetworkObserver):
         assert isinstance(receiver, NetworkEventReceiver)
         self.receiver = receiver
         self._calls = None
+        self._addr_families = addr_families
 
     def start(self):
         self.rtlistener = _rtnetlink.listener(self)
@@ -723,6 +731,9 @@ class UdevObserver(NetworkObserver):
     @coalesce('ifindex', 'local')
     def addr_change(self, action, data):
         log.debug('addr_change %s %s', action, data)
+        if self._addr_families is not None:
+            if data.get('family') not in self._addr_families:
+                return
         link = self._links.get(data['ifindex'])
         if link is None:
             return

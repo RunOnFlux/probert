@@ -1,6 +1,6 @@
 [project]
 name = "flux-probert"
-version = "0.2.0"
+version = "0.3.0"
 description = "Hardware probing tool (Flux fork of Canonical's probert)"
 readme = "README.md"
 license = "GPL-3.0-or-later"
